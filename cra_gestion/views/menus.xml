@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Menú Principal -->
+    <menuitem id="menu_cra_gestion_root"
+              name="CRA Gestión"
+              sequence="10"
+              web_icon="cra_gestion,static/description/icon.png"/>
+
+    <!-- Submenú Incidencias -->
+    <menuitem id="menu_cra_incidencias"
+              name="Incidencias"
+              parent="menu_cra_gestion_root"
+              sequence="10"/>
+
+    <menuitem id="menu_cra_incidencia_all"
+              name="Todas las Incidencias"
+              parent="menu_cra_incidencias"
+              action="action_cra_incidencia"
+              sequence="10"/>
+
+    <menuitem id="menu_cra_incidencia_my"
+              name="Mis Incidencias"
+              parent="menu_cra_incidencias"
+              action="action_cra_incidencia"
+              sequence="20"/>
+
+    <menuitem id="menu_cra_incidencia_critical"
+              name="Incidencias Críticas"
+              parent="menu_cra_incidencias"
+              action="action_cra_incidencia"
+              sequence="30"/>
+
+    <!-- Submenú Partes de Trabajo -->
+    <menuitem id="menu_cra_partes"
+              name="Partes de Trabajo"
+              parent="menu_cra_gestion_root"
+              sequence="20"/>
+
+    <menuitem id="menu_cra_parte_all"
+              name="Todos los Partes"
+              parent="menu_cra_partes"
+              action="action_cra_parte_trabajo"
+              sequence="10"/>
+
+    <menuitem id="menu_cra_parte_pending"
+              name="Partes Pendientes"
+              parent="menu_cra_partes"
+              action="action_cra_parte_trabajo"
+              sequence="20"/>
+
+    <!-- Submenú Protocolos -->
+    <menuitem id="menu_cra_protocolos"
+              name="Protocolos"
+              parent="menu_cra_gestion_root"
+              sequence="30"/>
+
+    <menuitem id="menu_cra_protocolo_all"
+              name="Todos los Protocolos"
+              parent="menu_cra_protocolos"
+              action="action_cra_protocolo"
+              sequence="10"/>
+
+</odoo>

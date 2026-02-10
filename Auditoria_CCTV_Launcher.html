@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auditoría Salones CCTV - CRA Ibersegur</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            gap: 20px;
+        }
+        
+        .stat-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            flex: 1;
+        }
+        
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-direction: column;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #e9ecef;
+        }
+        
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+        
+        .instructions {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+            border-radius: 5px;
+        }
+        
+        .instructions-title {
+            font-weight: bold;
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .instructions ul {
+            margin-left: 20px;
+            color: #856404;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 30px 0;
+            text-align: left;
+        }
+        
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .feature-icon {
+            font-size: 24px;
+        }
+        
+        .feature-text {
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🏢</div>
+        <h1>Auditoría Salones CCTV</h1>
+        <p class="subtitle">CRA Ibersegur - Sistema de Verificación</p>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number">58</div>
+                <div class="stat-label">Salones Totales</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">16</div>
+                <div class="stat-label">Visibles</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">42</div>
+                <div class="stat-label">A Verificar</div>
+            </div>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <span class="feature-icon">✅</span>
+                <span class="feature-text">27 campos optimizados</span>
+            </div>
+            <div class="feature">
+                <span class="feature-icon">🎨</span>
+                <span class="feature-text">Colores por categoría</span>
+            </div>
+            <div class="feature">
+                <span class="feature-icon">🔒</span>
+                <span class="feature-text">Puerto Servidor incluido</span>
+            </div>
+            <div class="feature">
+                <span class="feature-icon">📊</span>
+                <span class="feature-text">Filtros inteligentes</span>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <div class="instructions-title">📋 Pasos para usar:</div>
+            <ul>
+                <li>Haz clic en "Abrir en Google Sheets"</li>
+                <li>Acepta hacer una copia en tu Google Drive</li>
+                <li>El formato con colores se aplicará automáticamente</li>
+                <li>Empieza a auditar los salones</li>
+            </ul>
+        </div>
+        
+        <div class="buttons">
+            <a href="https://docs.google.com/spreadsheets/d/1XYZ/edit?usp=sharing" 
+               class="btn btn-primary" 
+               id="openSheets">
+                📊 Abrir en Google Sheets
+            </a>
+            <button class="btn btn-secondary" onclick="downloadCSV()">
+                💾 Descargar CSV Local
+            </button>
+            <button class="btn btn-secondary" onclick="showInstructions()">
+                📖 Ver Guía Completa
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        // Instrucciones para configurar Google Sheets
+        document.getElementById('openSheets').addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('📋 INSTRUCCIONES:\\n\\n1. Ve a https://sheets.google.com\\n2. Archivo → Importar → Subir\\n3. Selecciona el archivo "Auditoria_Salones_CCTV.csv"\\n4. Usa las configuraciones de formato automático\\n\\nEl checklist se abrirá con colores y formato optimizado.');
+            window.open('https://sheets.google.com', '_blank');
+        });
+        
+        function downloadCSV() {
+            window.location.href = 'Auditoria_Salones_CCTV.csv';
+        }
+        
+        function showInstructions() {
+            window.open('GUIA_AUDITORIA_SALONES.md', '_blank');
+        }
+    </script>
+</body>
+</html>

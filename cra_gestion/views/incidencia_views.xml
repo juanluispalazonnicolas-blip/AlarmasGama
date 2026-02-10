@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Vista de Lista (Tree) -->
+    <record id="view_cra_incidencia_tree" model="ir.ui.view">
+        <field name="name">cra.incidencia.tree</field>
+        <field name="model">cra.incidencia</field>
+        <field name="arch" type="xml">
+            <tree string="Incidencias" decoration-danger="prioridad=='critica'" 
+                  decoration-warning="prioridad=='alta'" decoration-info="estado=='en_curso'">
+                <field name="name"/>
+                <field name="fecha_incidencia"/>
+                <field name="cliente_id"/>
+                <field name="tipo_incidencia"/>
+                <field name="salon_afectado"/>
+                <field name="prioridad" widget="badge" 
+                       decoration-danger="prioridad=='critica'"
+                       decoration-warning="prioridad=='alta'"/>
+                <field name="estado" widget="badge" 
+                       decoration-success="estado=='resuelto'"
+                       decoration-info="estado=='en_curso'"
+                       decoration-muted="estado=='borrador'"/>
+                <field name="responsable_id" widget="many2one_avatar_user"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista de Formulario -->
+    <record id="view_cra_incidencia_form" model="ir.ui.view">
+        <field name="name">cra.incidencia.form</field>
+        <field name="model">cra.incidencia</field>
+        <field name="arch" type="xml">
+            <form string="Incidencia">
+                <header>
+                    <button name="action_iniciar" string="Iniciar" type="object" 
+                            class="oe_highlight" invisible="estado != 'borrador'"/>
+                    <button name="action_resolver" string="Resolver" type="object" 
+                            class="oe_highlight" invisible="estado != 'en_curso'"/>
+                    <button name="action_cerrar" string="Cerrar" type="object" 
+                            invisible="estado != 'resuelto'"/>
+                    <button name="action_reabrir" string="Reabrir" type="object" 
+                            invisible="estado not in ('resuelto', 'cerrado')"/>
+                    <field name="estado" widget="statusbar" 
+                           statusbar_visible="borrador,en_curso,resuelto,cerrado"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <!-- Botones inteligentes si es necesario -->
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="cliente_id" options="{'no_create': True}"/>
+                            <field name="salon_afectado"/>
+                            <field name="fecha_incidencia"/>
+                            <field name="responsable_id" widget="many2one_avatar_user"/>
+                        </group>
+                        <group>
+                            <field name="tipo_incidencia"/>
+                            <field name="origen"/>
+                            <field name="prioridad" widget="priority"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Descripción">
+                            <field name="descripcion" placeholder="Descripción detallada de la incidencia..."/>
+                        </page>
+                        <page string="Resolución" invisible="estado in ('borrador', 'en_curso')">
+                            <group>
+                                <field name="fecha_resolucion"/>
+                                <field name="notas_resolucion" placeholder="Describe cómo se resolvió la incidencia..."/>
+                            </group>
+                        </page>
+                        <page string="Partes de Trabajo">
+                            <field name="parte_trabajo_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="fecha_parte"/>
+                                    <field name="tipo_trabajo"/>
+                                    <field name="estado"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista Kanban -->
+    <record id="view_cra_incidencia_kanban" model="ir.ui.view">
+        <field name="name">cra.incidencia.kanban</field>
+        <field name="model">cra.incidencia</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="estado" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="cliente_id"/>
+                <field name="prioridad"/>
+                <field name="estado"/>
+                <field name="responsable_id"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_content">
+                            <div class="oe_kanban_card_header">
+                                <div class="oe_kanban_card_header_title">
+                                    <strong><field name="name"/></strong>
+                                </div>
+                                <div class="o_dropdown_kanban dropdown">
+                                    <a class="dropdown-toggle o-no-caret btn" role="button" data-bs-toggle="dropdown" href="#" aria-label="Dropdown menu" title="Dropdown menu">
+                                        <span class="fa fa-ellipsis-v"/>
+                                    </a>
+                                    <div class="dropdown-menu" role="menu">
+                                        <a role="menuitem" type="edit" class="dropdown-item">Editar</a>
+                                        <a role="menuitem" type="delete" class="dropdown-item">Eliminar</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="oe_kanban_card_content">
+                                <div><field name="cliente_id"/></div>
+                                <div><field name="tipo_incidencia"/></div>
+                                <div class="text-muted">
+                                    <field name="fecha_incidencia" widget="date"/>
+                                </div>
+                            </div>
+                            <div class="oe_kanban_card_footer">
+                                <div class="float-start">
+                                    <field name="prioridad" widget="priority"/>
+                                </div>
+                                <div class="float-end">
+                                    <field name="responsable_id" widget="many2one_avatar_user"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Vista de Búsqueda -->
+    <record id="view_cra_incidencia_search" model="ir.ui.view">
+        <field name="name">cra.incidencia.search</field>
+        <field name="model">cra.incidencia</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Incidencias">
+                <field name="name"/>
+                <field name="cliente_id"/>
+                <field name="salon_afectado"/>
+                <field name="responsable_id"/>
+                <filter string="Mis Incidencias" name="my_incidencias" 
+                        domain="[('responsable_id', '=', uid)]"/>
+                <separator/>
+                <filter string="Borrador" name="borrador" domain="[('estado', '=', 'borrador')]"/>
+                <filter string="En Curso" name="en_curso" domain="[('estado', '=', 'en_curso')]"/>
+                <filter string="Resueltas" name="resuelto" domain="[('estado', '=', 'resuelto')]"/>
+                <separator/>
+                <filter string="Prioridad Crítica" name="critica" 
+                        domain="[('prioridad', '=', 'critica')]"/>
+                <filter string="Prioridad Alta" name="alta" 
+                        domain="[('prioridad', '=', 'alta')]"/>
+                <separator/>
+                <filter string="Origen AJAX" name="ajax" domain="[('origen', '=', 'ajax')]"/>
+                <separator/>
+                <filter string="Última Semana" name="last_week" 
+                        domain="[('fecha_incidencia', '&gt;=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                <group expand="0" string="Agrupar Por">
+                    <filter string="Estado" name="group_estado" context="{'group_by': 'estado'}"/>
+                    <filter string="Cliente" name="group_cliente" context="{'group_by': 'cliente_id'}"/>
+                    <filter string="Tipo" name="group_tipo" context="{'group_by': 'tipo_incidencia'}"/>
+                    <filter string="Prioridad" name="group_prioridad" context="{'group_by': 'prioridad'}"/>
+                    <filter string="Responsable" name="group_responsable" context="{'group_by': 'responsable_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Acción de Ventana -->
+    <record id="action_cra_incidencia" model="ir.actions.act_window">
+        <field name="name">Incidencias</field>
+        <field name="res_model">cra.incidencia</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="context">{'search_default_en_curso': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crear una nueva incidencia
+            </p>
+            <p>
+                Registra y gestiona todas las incidencias de la central receptora de alarmas.
+            </p>
+        </field>
+    </record>
+
+</odoo>

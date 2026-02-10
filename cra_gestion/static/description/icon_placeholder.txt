@@ -1,0 +1,13 @@
+# ICONO PLACEHOLDER
+# Para un ícono profesional, puedes usar herramientas online como:
+# - https://www.canva.com (crear un icono 512x512)
+# - https://www.figma.com (diseño vectorial)
+# 
+# Colores sugeridos:
+# - Azul oscuro: #1F3B73
+# - Naranja vibrante: #FF6B35
+# - Blanco: #FFFFFF
+#
+# Elementos: Escudo + ondas de vigilancia + cámara
+#
+# Este archivo debe reemplazarse por un archivo icon.png de 512x512 píxeles

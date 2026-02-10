@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Vista de Lista (Tree) -->
+    <record id="view_cra_parte_trabajo_tree" model="ir.ui.view">
+        <field name="name">cra.parte.trabajo.tree</field>
+        <field name="model">cra.parte.trabajo</field>
+        <field name="arch" type="xml">
+            <tree string="Partes de Trabajo" decoration-info="estado=='en_proceso'" 
+                  decoration-success="estado=='completado'">
+                <field name="name"/>
+                <field name="fecha_parte"/>
+                <field name="cliente_id"/>
+                <field name="tipo_trabajo"/>
+                <field name="tecnico_ids" widget="many2many_tags"/>
+                <field name="horas_trabajo" sum="Total Horas"/>
+                <field name="estado" widget="badge" 
+                       decoration-success="estado=='completado'"
+                       decoration-info="estado=='en_proceso'"
+                       decoration-muted="estado=='borrador'"/>
+                <field name="dentro_garantia" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista de Formulario -->
+    <record id="view_cra_parte_trabajo_form" model="ir.ui.view">
+        <field name="name">cra.parte.trabajo.form</field>
+        <field name="model">cra.parte.trabajo</field>
+        <field name="arch" type="xml">
+            <form string="Parte de Trabajo">
+                <header>
+                    <button name="action_iniciar" string="Iniciar" type="object" 
+                            class="oe_highlight" invisible="estado != 'borrador'"/>
+                    <button name="action_completar" string="Completar" type="object" 
+                            class="oe_highlight" invisible="estado != 'en_proceso'"/>
+                    <button name="action_facturar" string="Facturar" type="object" 
+                            invisible="estado != 'completado'"/>
+                    <button name="action_reabrir" string="Reabrir" type="object" 
+                            invisible="estado not in ('completado', 'facturado')"/>
+                    <field name="estado" widget="statusbar" 
+                           statusbar_visible="borrador,en_proceso,completado,facturado"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="cliente_id" options="{'no_create': True}"/>
+                            <field name="fecha_parte"/>
+                            <field name="tipo_trabajo"/>
+                            <field name="dentro_garantia"/>
+                        </group>
+                        <group>
+                            <field name="tecnico_ids" widget="many2many_tags"/>
+                            <field name="tecnico_count" invisible="1"/>
+                            <field name="horas_trabajo"/>
+                            <field name="albaran_numero"/>
+                            <field name="incidencia_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Descripción del Trabajo">
+                            <field name="descripcion_trabajo" placeholder="Describe detalladamente el trabajo realizado..."/>
+                        </page>
+                        <page string="Material Usado">
+                            <field name="material_usado" placeholder="Lista de material utilizado en el trabajo..."/>
+                        </page>
+                        <page string="Observaciones">
+                            <group>
+                                <field name="observaciones" placeholder="Observaciones adicionales..."/>
+                            </group>
+                        </page>
+                        <page string="Firma del Cliente">
+                            <group>
+                                <field name="firma_cliente" widget="image" class="oe_avatar"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista de Búsqueda -->
+    <record id="view_cra_parte_trabajo_search" model="ir.ui.view">
+        <field name="name">cra.parte.trabajo.search</field>
+        <field name="model">cra.parte.trabajo</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Partes de Trabajo">
+                <field name="name"/>
+                <field name="cliente_id"/>
+                <field name="tecnico_ids"/>
+                <field name="albaran_numero"/>
+                <filter string="Mis Partes" name="my_partes" 
+                        domain="[('tecnico_ids', 'in', [uid])]"/>
+                <separator/>
+                <filter string="Borrador" name="borrador" domain="[('estado', '=', 'borrador')]"/>
+                <filter string="En Proceso" name="en_proceso" domain="[('estado', '=', 'en_proceso')]"/>
+                <filter string="Completados" name="completado" domain="[('estado', '=', 'completado')]"/>
+                <filter string="Pendientes Facturar" name="pendiente_facturar" 
+                        domain="[('estado', '=', 'completado')]"/>
+                <separator/>
+                <filter string="En Garantía" name="garantia" domain="[('dentro_garantia', '=', True)]"/>
+                <separator/>
+                <filter string="Esta Semana" name="this_week" 
+                        domain="[('fecha_parte', '&gt;=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                <filter string="Este Mes" name="this_month" 
+                        domain="[('fecha_parte', '&gt;=', (context_today().replace(day=1)).strftime('%Y-%m-%d'))]"/>
+                <group expand="0" string="Agrupar Por">
+                    <filter string="Estado" name="group_estado" context="{'group_by': 'estado'}"/>
+                    <filter string="Cliente" name="group_cliente" context="{'group_by': 'cliente_id'}"/>
+                    <filter string="Tipo de Trabajo" name="group_tipo" context="{'group_by': 'tipo_trabajo'}"/>
+                    <filter string="Fecha" name="group_fecha" context="{'group_by': 'fecha_parte'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Acción de Ventana -->
+    <record id="action_cra_parte_trabajo" model="ir.actions.act_window">
+        <field name="name">Partes de Trabajo</field>
+        <field name="res_model">cra.parte.trabajo</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_en_proceso': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crear un nuevo parte de trabajo
+            </p>
+            <p>
+                Gestiona los partes de trabajo de los técnicos, incluyendo asignaciones, 
+                descripción de tareas y control de horas.
+            </p>
+        </field>
+    </record>
+
+</odoo>

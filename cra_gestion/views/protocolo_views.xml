@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Vista de Lista (Tree) -->
+    <record id="view_cra_protocolo_tree" model="ir.ui.view">
+        <field name="name">cra.protocolo.tree</field>
+        <field name="model">cra.protocolo</field>
+        <field name="arch" type="xml">
+            <tree string="Protocolos" decoration-danger="nivel_criticidad=='critico'" 
+                  decoration-warning="nivel_criticidad=='prioritario'">
+                <field name="name"/>
+                <field name="cliente_id"/>
+                <field name="tipo_servicio"/>
+                <field name="nivel_criticidad" widget="badge"
+                       decoration-danger="nivel_criticidad=='critico'"
+                       decoration-warning="nivel_criticidad=='prioritario'"/>
+                <field name="dentro_garantia" widget="boolean_toggle"/>
+                <field name="fecha_fin_garantia"/>
+                <field name="dias_restantes_garantia" optional="hide"/>
+                <field name="activo" widget="boolean_toggle"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista de Formulario -->
+    <record id="view_cra_protocolo_form" model="ir.ui.view">
+        <field name="name">cra.protocolo.form</field>
+        <field name="model">cra.protocolo</field>
+        <field name="arch" type="xml">
+            <form string="Protocolo">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Garantía Vencida" 
+                            bg_color="text-bg-danger" 
+                            invisible="dentro_garantia or not fecha_fin_garantia"/>
+                    <widget name="web_ribbon" title="En Garantía" 
+                            bg_color="text-bg-success" 
+                            invisible="not dentro_garantia"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nombre del protocolo..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="cliente_id" options="{'no_create': True}"/>
+                            <field name="tipo_servicio"/>
+                            <field name="nivel_criticidad" widget="priority"/>
+                            <field name="activo"/>
+                        </group>
+                        <group>
+                            <label for="contacto_emergencia" string="Contacto de Emergencia"/>
+                            <div class="o_row">
+                                <field name="contacto_emergencia" placeholder="Nombre"/>
+                                <field name="telefono_emergencia" placeholder="Teléfono"/>
+                            </div>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Checklist">
+                            <field name="checklist" placeholder="Lista de verificación y procedimientos a seguir..."/>
+                        </page>
+                        <page string="Horarios">
+                            <group>
+                                <field name="horario_limpieza" placeholder="Ej: Lunes-Viernes 8:00-10:00"/>
+                                <field name="horario_guardias" placeholder="Ej: 24/7 excepto domingos"/>
+                            </group>
+                        </page>
+                        <page string="Acciones por Incidencia">
+                            <field name="acciones_incidencia" placeholder="Procedimientos a seguir ante diferentes tipos de incidencias..."/>
+                        </page>
+                        <page string="Garantía">
+                            <group>
+                                <field name="fecha_inicio_garantia"/>
+                                <field name="fecha_fin_garantia"/>
+                                <field name="dentro_garantia" readonly="1"/>
+                                <field name="dias_restantes_garantia" readonly="1" 
+                                       invisible="not fecha_fin_garantia"/>
+                            </group>
+                        </page>
+                        <page string="Notas Especiales">
+                            <field name="notas_especiales" placeholder="Información adicional relevante..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista de Búsqueda -->
+    <record id="view_cra_protocolo_search" model="ir.ui.view">
+        <field name="name">cra.protocolo.search</field>
+        <field name="model">cra.protocolo</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Protocolos">
+                <field name="name"/>
+                <field name="cliente_id"/>
+                <filter string="Activos" name="activo" domain="[('activo', '=', True)]"/>
+                <separator/>
+                <filter string="Salones de Juego" name="salon" 
+                        domain="[('tipo_servicio', '=', 'salon_juego')]"/>
+                <filter string="Campos Solares" name="solar" 
+                        domain="[('tipo_servicio', '=', 'campo_solar')]"/>
+                <separator/>
+                <filter string="Críticos" name="critico" 
+                        domain="[('nivel_criticidad', '=', 'critico')]"/>
+                <filter string="Prioritarios" name="prioritario" 
+                        domain="[('nivel_criticidad', '=', 'prioritario')]"/>
+                <separator/>
+                <filter string="En Garantía" name="en_garantia" 
+                        domain="[('dentro_garantia', '=', True)]"/>
+                <filter string="Garantía Vencida" name="garantia_vencida" 
+                        domain="[('dentro_garantia', '=', False), ('fecha_fin_garantia', '!=', False)]"/>
+                <filter string="Garantía Próxima a Vencer" name="garantia_proxima" 
+                        domain="[('dias_restantes_garantia', '&lt;=', 30), ('dias_restantes_garantia', '&gt;', 0)]"/>
+                <group expand="0" string="Agrupar Por">
+                    <filter string="Cliente" name="group_cliente" context="{'group_by': 'cliente_id'}"/>
+                    <filter string="Tipo de Servicio" name="group_tipo" context="{'group_by': 'tipo_servicio'}"/>
+                    <filter string="Nivel de Criticidad" name="group_criticidad" context="{'group_by': 'nivel_criticidad'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Acción de Ventana -->
+    <record id="action_cra_protocolo" model="ir.actions.act_window">
+        <field name="name">Protocolos</field>
+        <field name="res_model">cra.protocolo</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_activo': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crear un nuevo protocolo
+            </p>
+            <p>
+                Define protocolos personalizados para cada cliente, incluyendo checklists, 
+                horarios y procedimientos de actuación.
+            </p>
+        </field>
+    </record>
+
+</odoo>
